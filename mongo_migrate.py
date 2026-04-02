@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 class MongoMigrator:
     def __init__(self, config_file: str = 'config.ini'):
         """Initialize MongoDB migrator with configuration."""
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(config_file)
 
         # Get connection details
@@ -57,7 +57,7 @@ class MongoMigrator:
             )
             # Test connection
             self.source_client.admin.command('ping')
-            logger.info("✓ Connected to source MongoDB")
+            logger.info("SUCCESS: Connected to source MongoDB")
 
             logger.info("Connecting to destination MongoDB...")
             self.dest_client = MongoClient(
@@ -66,7 +66,7 @@ class MongoMigrator:
             )
             # Test connection
             self.dest_client.admin.command('ping')
-            logger.info("✓ Connected to destination MongoDB")
+            logger.info("SUCCESS: Connected to destination MongoDB")
 
             return True
 
@@ -133,7 +133,7 @@ class MongoMigrator:
                             index_spec['keys'],
                             **{k: v for k, v in index_spec.items() if k != 'keys'}
                         )
-                        logger.info(f"✓ Created index: {index['name']}")
+                        logger.info(f"SUCCESS: Created index: {index['name']}")
                     except Exception as e:
                         logger.warning(f"Failed to create index {index['name']}: {e}")
 
@@ -143,12 +143,15 @@ class MongoMigrator:
     def copy_collection(self, db_name: str, collection_name: str, dry_run: bool = False) -> bool:
         """Copy a single collection from source to destination."""
         try:
+            logger.info(f"Accessing database: {db_name}")
             source_db = self.source_client[db_name]
             dest_db = self.dest_client[db_name]
 
+            logger.info(f"Accessing collection: {collection_name}")
             source_collection = source_db[collection_name]
             dest_collection = dest_db[collection_name]
 
+            logger.info(f"Getting document count for collection: {collection_name}")
             # Get document count
             doc_count = source_collection.count_documents({})
             logger.info(f"Collection {collection_name} has {doc_count} documents")
@@ -175,22 +178,30 @@ class MongoMigrator:
                 batch.append(doc)
 
                 if len(batch) >= self.batch_size:
-                    dest_collection.insert_many(batch, ordered=False)
-                    copied_count += len(batch)
-                    batch_num += 1
-                    logger.info(f"Copied batch {batch_num}: {copied_count}/{doc_count} documents")
-                    batch = []
+                    try:
+                        dest_collection.insert_many(batch)
+                        copied_count += len(batch)
+                        batch_num += 1
+                        logger.info(f"Copied batch {batch_num}: {copied_count}/{doc_count} documents")
+                        batch = []
+                    except Exception as e:
+                        logger.error(f"Error inserting batch: {e}")
+                        raise
 
             # Insert remaining documents
             if batch:
-                dest_collection.insert_many(batch, ordered=False)
-                copied_count += len(batch)
-                logger.info(f"Copied final batch: {copied_count}/{doc_count} documents")
+                try:
+                    dest_collection.insert_many(batch)
+                    copied_count += len(batch)
+                    logger.info(f"Copied final batch: {copied_count}/{doc_count} documents")
+                except Exception as e:
+                    logger.error(f"Error inserting final batch: {e}")
+                    raise
 
             # Copy indexes
             self.copy_indexes(source_collection, dest_collection, dry_run)
 
-            logger.info(f"✓ Successfully copied collection: {collection_name}")
+            logger.info(f"SUCCESS: Successfully copied collection: {collection_name}")
             return True
 
         except Exception as e:
@@ -232,7 +243,7 @@ class MongoMigrator:
                     logger.error(f"Failed to copy collection: {collection_name}")
 
             if success_count == len(collections):
-                logger.info(f"✓ Successfully copied all collections from database: {db_name}")
+                logger.info(f"SUCCESS: Successfully copied all collections from database: {db_name}")
                 return True
             else:
                 logger.warning(f"Copied {success_count}/{len(collections)} collections")
