@@ -104,13 +104,15 @@ class MongoMigrator:
             logger.error(f"Error listing collections in {db_name}: {e}")
             return []
 
-    def copy_indexes(self, source_collection, dest_collection, dry_run: bool = False):
+    def copy_collection_indexes(self, source_collection, dest_collection, dry_run: bool = False):
         """Copy indexes from source to destination collection."""
         if not self.copy_indexes:
             return
 
         try:
+            logger.info("Starting index copying")
             indexes = list(source_collection.list_indexes())
+            logger.info(f"Found {len(indexes)} indexes")
             for index in indexes:
                 if index['name'] == '_id_':
                     continue  # Skip default _id index
@@ -222,7 +224,7 @@ class MongoMigrator:
                 raise
 
             # Copy indexes
-            self.copy_indexes(source_collection, dest_collection, dry_run)
+            self.copy_collection_indexes(source_collection, dest_collection, dry_run)
 
             logger.info(f"SUCCESS: Successfully copied collection: {collection_name}")
             return True
