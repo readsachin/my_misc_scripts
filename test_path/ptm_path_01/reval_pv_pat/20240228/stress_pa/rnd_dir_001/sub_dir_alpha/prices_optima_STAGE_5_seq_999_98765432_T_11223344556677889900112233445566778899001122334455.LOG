@@ -1,0 +1,9 @@
+// Prices log file with 45-digit trade ID
+hostid: 98765432
+trade_id: 11223344556677889900112233445566778899001122334455
+md5sum: 9876543210abcdef0123456789abcdef01234567
+timestamp: 2024-02-28T23:59:00Z
+environment: STAGE
+sequence: 999
+optima_env: STAGE
+file_type: prices_log

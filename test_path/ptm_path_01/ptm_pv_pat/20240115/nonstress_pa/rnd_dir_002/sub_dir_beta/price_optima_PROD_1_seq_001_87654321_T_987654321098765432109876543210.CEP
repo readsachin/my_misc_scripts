@@ -1,0 +1,8 @@
+// PV file with optima environment pattern
+hostid: 87654321
+trade_id: 987654321098765432109876543210
+md5sum: f9e8d7c6b5a49483726150394857281639205816
+timestamp: 2024-01-15T14:45:00Z
+environment: PROD
+sequence: 001
+optima_env: PROD

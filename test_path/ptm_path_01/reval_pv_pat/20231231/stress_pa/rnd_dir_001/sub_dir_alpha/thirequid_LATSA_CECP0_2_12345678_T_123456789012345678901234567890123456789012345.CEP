@@ -1,0 +1,7 @@
+// Sample PV file content
+hostid: 12345678
+trade_id: 123456789012345678901234567890123456789012345
+md5sum: a1b2c3d4e5f6789012345678901234567890abcdef
+timestamp: 2023-12-31T10:30:00Z
+environment: PROD
+sequence: 001

@@ -1,0 +1,9 @@
+// Service BASFL PV file
+hostid: 56789012
+trade_id: 192837465019283746501928374650192
+md5sum: 3c4d5e6f789012345678901234567890abcdef123
+timestamp: 2024-03-01T08:15:00Z
+environment: UAT
+sequence: 042
+optima_env: UAT
+service_type: BASFL

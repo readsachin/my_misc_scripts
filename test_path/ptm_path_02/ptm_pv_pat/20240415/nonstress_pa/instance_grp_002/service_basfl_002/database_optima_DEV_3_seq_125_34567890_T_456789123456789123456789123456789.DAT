@@ -1,0 +1,9 @@
+// Database PV file
+hostid: 34567890
+trade_id: 456789123456789123456789123456789
+md5sum: 7e8f9a0b1c2d3e4f5678901234567890fedcba98
+timestamp: 2024-04-15T16:20:00Z
+environment: DEV
+sequence: 125
+optima_env: DEV
+file_type: database

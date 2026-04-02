@@ -1,0 +1,19 @@
+# Basic Configuration for Windows Server
+# Data processing and revaluation parameters
+
+# Meta data location for archive storage
+meta_data_location: E:/upload_chatbot/misc/test_path/orchestrator/archive/meta_data/pv_recon
+
+# Non-stress revaluation PV  pattern
+nonstress_reval_pv_pat: "*/MODEL_UNSTRESSED/"
+
+# Stress revaluation PV  pattern
+stress_reval_pv_pat: "*/MODEL_STRESSED/"
+
+# Revaluation PV  pattern
+reval_pv_pat: "*/price-reval/*"
+
+# PnL PV  pattern
+ptm_pv_pat: "*/price-fe/*"
+
+

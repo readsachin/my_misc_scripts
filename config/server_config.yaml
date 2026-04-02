@@ -1,0 +1,49 @@
+# Server Configuration for Windows Crema Orchestrator
+# Adapted from the original Linux configuration
+
+instances:
+  - instance: INSTANCE1
+    orch_best: orchestrator1u
+    orch_path: E:/upload_chatbot/misc/test_path/orchestrator/INSTANCE1
+    crm_host: localhost
+    crm_path: E:/upload_chatbot/misc/test_path/instances/INSTANCE1
+    report_host: localhost
+    report_path: E:/upload_chatbot/misc/test_path/instances/INSTANCE1
+
+    grid_session:
+      - E:/upload_chatbot/misc/test_path/orchestrator/INSTANCE1/session
+      - E:/upload_chatbot/misc/test_path/uat_deploy/bin/uat6/bootstrap/reval
+      - E:/upload_chatbot/misc/test_path/uat_deploy/bin/uat6/bootstrap/reval
+
+    admin_url: http://localhost:21720/sca_admin_ui/
+
+    crm_uat:
+      - E:/upload_chatbot/misc/test_path/uat_deploy/bin/uat6/bootstrap/reval
+      - E:/upload_chatbot/misc/test_path/uat_deploy/bin/uat6/bootstrap/reval
+
+    config_path: E:/upload_chatbot/misc/test_path/orchestrator/sca_orchestrator/bin
+    bin_jars: E:/upload_chatbot/misc/test_path/bin/jars
+    ptm_jars: E:/upload_chatbot/misc/test_path/bin/jars
+
+    instance_type: UAT
+    psi: E:/upload_chatbot/misc/test_path/instances/INSTANCE1/env/processing/received
+    svc2: E:/upload_chatbot/misc/test_path/instances/processing/received
+    archiv: archiv-dev
+    pre_prod: UAT_IPCS_Aggreq
+
+    ftp_config:
+      request: svc-icg-uk
+      request_path: FTP_IPCS_Aggreq
+
+    shared_config: FTP_IPCS_Aggreq
+    instance: uatbaseq17
+    instance_url: baseq17
+
+    file_paths:
+      orch_path: E:/upload_chatbot/misc/test_path/orchestrator/uatbaseq17
+      crm_host: localhost
+      crm_path: E:/upload_chatbot/misc/test_path/instances/uatbaseq17
+      report_host: localhost
+      report_path: E:/upload_chatbot/misc/test_path/instances/uatbaseq17
+      ptm_jars: E:/upload_chatbot/misc/test_path/bin/jars
+
