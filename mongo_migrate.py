@@ -148,13 +148,23 @@ class MongoMigrator:
             dest_db = self.dest_client[db_name]
 
             logger.info(f"Accessing collection: {collection_name}")
-            source_collection = source_db[collection_name]
-            dest_collection = dest_db[collection_name]
+            # Use get_collection() to avoid naming conflicts
+            source_collection = source_db.get_collection(collection_name)
+            dest_collection = dest_db.get_collection(collection_name)
+
+            logger.info(f"Collection objects created successfully")
+            logger.info(f"Source collection type: {type(source_collection)}")
+            logger.info(f"Destination collection type: {type(dest_collection)}")
 
             logger.info(f"Getting document count for collection: {collection_name}")
-            # Get document count
-            doc_count = source_collection.count_documents({})
-            logger.info(f"Collection {collection_name} has {doc_count} documents")
+            # Get document count with specific error handling
+            try:
+                doc_count = source_collection.count_documents({})
+                logger.info(f"Collection {collection_name} has {doc_count} documents")
+            except Exception as count_error:
+                logger.error(f"Error getting document count: {count_error}")
+                logger.error(f"Error type: {type(count_error)}")
+                raise
 
             if dry_run:
                 logger.info(f"[DRY RUN] Would copy {doc_count} documents from {collection_name}")
