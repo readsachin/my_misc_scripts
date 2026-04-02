@@ -181,32 +181,45 @@ class MongoMigrator:
             copied_count = 0
             batch_num = 0
 
-            cursor = source_collection.find().batch_size(self.batch_size)
+            logger.info(f"Creating cursor for collection: {collection_name}")
+            try:
+                cursor = source_collection.find().batch_size(self.batch_size)
+                logger.info(f"Cursor created successfully")
+            except Exception as cursor_error:
+                logger.error(f"Error creating cursor: {cursor_error}")
+                raise
 
             batch = []
-            for doc in cursor:
-                batch.append(doc)
+            logger.info(f"Starting document iteration")
+            try:
+                for doc in cursor:
+                    batch.append(doc)
 
-                if len(batch) >= self.batch_size:
+                    if len(batch) >= self.batch_size:
+                        try:
+                            dest_collection.insert_many(batch)
+                            copied_count += len(batch)
+                            batch_num += 1
+                            logger.info(f"Copied batch {batch_num}: {copied_count}/{doc_count} documents")
+                            batch = []
+                        except Exception as e:
+                            logger.error(f"Error inserting batch: {e}")
+                            raise
+
+                # Insert remaining documents
+                if batch:
                     try:
                         dest_collection.insert_many(batch)
                         copied_count += len(batch)
-                        batch_num += 1
-                        logger.info(f"Copied batch {batch_num}: {copied_count}/{doc_count} documents")
-                        batch = []
+                        logger.info(f"Copied final batch: {copied_count}/{doc_count} documents")
                     except Exception as e:
-                        logger.error(f"Error inserting batch: {e}")
+                        logger.error(f"Error inserting final batch: {e}")
                         raise
 
-            # Insert remaining documents
-            if batch:
-                try:
-                    dest_collection.insert_many(batch)
-                    copied_count += len(batch)
-                    logger.info(f"Copied final batch: {copied_count}/{doc_count} documents")
-                except Exception as e:
-                    logger.error(f"Error inserting final batch: {e}")
-                    raise
+            except Exception as iteration_error:
+                logger.error(f"Error during document iteration: {iteration_error}")
+                logger.error(f"Error type: {type(iteration_error)}")
+                raise
 
             # Copy indexes
             self.copy_indexes(source_collection, dest_collection, dry_run)
